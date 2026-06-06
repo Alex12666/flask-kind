@@ -1,0 +1,49 @@
+name: CI - Test Backend with Kubernetes Pod
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-k8s:
+    runs-on: ubuntu-latest
+
+    steps:
+   
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+   
+    - name: Create Kind Cluster
+      uses: helm/kind-action@v1.10.0
+      with:
+        cluster_name: meucluster  
+
+    
+    - name: Build Docker Image
+      run: |
+        docker build -t meu-flask:multistage -f backend/Dockerfile backend
+
+   
+    - name: Load Image into Kind
+      run: |
+        kind load docker-image meu-flask:multistage --name meucluster
+
+   
+    - name: Apply Kubernetes Pod
+      run: |
+        kubectl apply -f pod.yaml
+
+    
+    - name: Wait for Pod to be ready
+      run: |
+        kubectl wait --for=condition=Ready pod/meu-pod --timeout=60s
+
+    
+    - name: Test Pod Connection
+      run: |
+        kubectl port-forward pod/meu-pod 5000:5000 &
+        sleep 3
+        curl --fail http://localhost:5000/

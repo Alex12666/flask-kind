@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: meu-pod
+  labels:
+    app: meu-app
+spec:
+  containers:
+  - name: meu-container
+    
+    image: meu-flask:multistage
+    
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 5000
