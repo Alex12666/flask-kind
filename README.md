@@ -8,7 +8,7 @@ O projeto também conta com uma esteira de automação (CI/CD) via **GitHub Acti
 
 ---
 
-## 📁 Estrutura do Diretório
+##  Estrutura do Diretório
 
 ```text
 .
